@@ -27,6 +27,7 @@
   "dependencies": {
     "jimp-compact": "^0.16.1-2",
     "jj.js": "^0.8.8",
-    "markdown-it": "^13.0.1"
+    "markdown-it": "^13.0.1",
+    "open": "^8.4.0"
   }
 }

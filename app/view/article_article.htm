@@ -7,19 +7,21 @@
 {{block 'header'}}
         <div class="container jumbotron">
             <h1>{{article.title}}</h1>
-            <p>时间: {{article.add_time | dateFormat 'YYYY-mm-dd HH:ii'}} &nbsp;浏览: {{article.click}} &nbsp;作者: {{article.writer}} &nbsp;来源: <a href="{{article.source_url || url(':article', {id: article.id})}}">{{article.source}}</a></p>
+            <p>时间: {{article.add_time | dateFormat 'YYYY-mm-dd HH:ii'}} &nbsp;浏览: {{article.click}} &nbsp;作者: {{article.writer}}</p>
         </div>
 {{/block}}
 
 {{block 'content'}}
 <div class="container row">
+    <div class="ztree"></div>
     <main class="main">
-        <article class="content">
+        <article class="content main-content">
             {{@article.content}}
             <p>
                 关键词：{{each keywords_list item}}<span class="tag">{{item}}</span>{{/each}}<br>
                 所属分类：<a href="{{url(':cate', {cate: cate.cate_dir})}}">{{cate.cate_name}}</a><br>
-                本文地址：<a href="{{article_link}}">{{article_link}}</a>
+                本文地址：<a href="{{article_link}}">{{article_link}}</a><br>
+                {{if article.source_url}}来源链接：<a href="{{article.source_url}}" target="_blank">{{article.source_url}}</a>{{/if}}
             </p>
         </article>
         {{if related && related.length}}
@@ -80,4 +82,38 @@
 <script src="/static/common/jdenticon/jdenticon.js"></script>
 <script src="/static/common/highlight/highlight.min.js"></script>
 <script src="/static/content.js"></script>
+<script src="/static/common/ztree/jquery.ztree.core-3.5.js"></script>
+<script src="/static/common/ztree/ztree_toc.min.js"></script>
+<script>
+  let treeLeft, treeShow, $tree, $mainContent;
+
+  $(document).ready(function() {
+    $tree = $('.ztree');
+    $mainContent = $('.main-content');
+    treeLeft = $tree.offset().left;
+    treeShow = $tree.is(':visible');
+    $tree.ztree_toc({
+      _header_nodes: [],
+      documment_selector: '.main-content',
+      ztreeStyle: {
+        width:'260px',
+        overflow: 'auto',
+        // position: 'fixed',
+        'z-index': 2147483647,
+        border: '0px none',
+      }
+    });
+  });
+
+  $(document).scroll(function() {
+    if (!treeShow) return;
+    if ($(this).scrollTop() > 160) {
+      $tree.css({ position: 'fixed', top: '20px', left: treeLeft + 'px' });
+      $mainContent.css({ paddingLeft: '260px' });
+    } else {
+      $tree.css({ position: 'static' });
+      $mainContent.css({ paddingLeft: '0px' });
+    }
+  });
+</script>
 {{/block}}
